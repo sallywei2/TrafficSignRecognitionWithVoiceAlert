@@ -1,12 +1,24 @@
-"""Custom argument parser"""
+"""
+Custom argument parser
+
+Classes:
+    CustomArgParser: Custom ArgumentParser with arguments specific to this program
+"""
 
 import argparse
 
 class CustomArgParser():
-    """
-    This class defines the parser for this project.
+    """This class defines the parser for this project.
 
-    https://docs.python.org/3/library/argparse.html
+    Attributes:
+        parser (argparser.ArgumentParser)
+
+    Typical usage example:
+
+        parser = CustomArgParser()
+        args = parser.parse_args()
+
+    See also https://docs.python.org/3/library/argparse.html
     """
     def __init__(self):
         self.parser = argparse.ArgumentParser(
