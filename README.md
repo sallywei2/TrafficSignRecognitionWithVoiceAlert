@@ -39,3 +39,4 @@ pip install -U scikit-learn
 # Contributors
 
 WIP
+Dataset: The German Traffic Sign Recognition Benchmark (GSTRB) by Institut Für Neuroinformatik (INI) https://benchmark.ini.rub.de/gtsrb_news.html
