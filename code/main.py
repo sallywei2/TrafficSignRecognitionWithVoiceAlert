@@ -35,7 +35,7 @@ def download_images():
     Unzip files: https://stackoverflow.com/a/3451150
     """
     download_from_internet(g.IMAGES_URL, g.IMAGES)
-    if not os.path.exists(g.DATASET):
+    if not os.path.exists(g.DATASET + "\\train"):
         with zipfile.ZipFile(g.IMAGES, 'r') as zip_ref:
             zip_ref.extractall(g.DATASET)
 
