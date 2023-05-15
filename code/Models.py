@@ -19,12 +19,15 @@ from keras.models import Sequential, load_model
 from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout
 from tensorflow.keras.preprocessing import image as kimg
 
+import pyttsx3
+
 class CNN:
   """
   Attributes:
     input_shape: keras Conv2D input_shape parameter
     model: internal saved keras model
     history: internal saved training history (keras History object)
+    engine: pyttsx3 engine for text-to-speech
 
   Typical usage example:
     # create a new CNN for an input with keras input_shape of 10000
@@ -44,6 +47,7 @@ class CNN:
 
   def __init__(self):
     self.model = Sequential() # initialize basic placeholder model
+    self.engine = pyttsx3.init() # text to speech engine
     
   def new(self, input_shape):
     """
@@ -184,6 +188,9 @@ class CNN:
     predicted_class = np.argmax(probabilities)
 
     print("Predicted traffic sign is: ", g.CLASSES[predicted_class])
+    self.engine.say(g.CLASSES[predicted_class])
+    self.engine.runAndWait()
+    
     plt.imshow(kimg.load_img(imgpath))
     plt.show()
 

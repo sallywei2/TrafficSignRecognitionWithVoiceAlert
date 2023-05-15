@@ -14,6 +14,7 @@ pip install matplotlib
 pip install pandas
 pip install tensorflow
 pip install -U scikit-learn
+pip install pyttsx3
 ```
 
 # Installation
