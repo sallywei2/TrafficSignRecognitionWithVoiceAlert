@@ -86,10 +86,15 @@ class CNN:
     return self.history
 
   def predict(self, img):
-    # Predict probabilities for input image
+    """
+    Predict probabilities for the input image
+    """
     return self.model.predict(img)
 
   def save_model_to_file(self, filepath):
+    """
+    Save the keras model to file at the given filepath.
+    """
     self.model.save(filepath)
     print("Model saved to file: %s" % filepath)
 
@@ -103,12 +108,18 @@ class CNN:
       print("History saved to file: %s" % pickle_location)
 
   def load_model_from_file(self,filepath):
+    """
+    Loads the model from file.
+    """
     print("Loading model from file: %s" % filepath)
     self.model = load_model(filepath) # keras.model.load_model
     #print("Model loaded from file.")
     return self.model
 
   def load_history_from_file(self,pickle_location):
+    """
+    Loads the history from file. Expects a pickle file.
+    """
     print("Loading training history from file: %s" % pickle_location)
     with open(pickle_location, "rb") as filepath:
       self.history = pickle.load(filepath)
@@ -117,7 +128,7 @@ class CNN:
 
   def show_metrics(self):
     """
-      Shows plots of training vs validation accuracy and loss for the model.
+      Shows and save to file the plots of training vs validation accuracy and loss for the model.
     """
     if self.history:
       # accuracy 
@@ -142,7 +153,9 @@ class CNN:
       plt.show()
 
   def test_on_img(self, img):
-    # Test the model on the given image (img)
+    """
+    Test the model on the given image (img)
+    """
     data = []
     image = Image.open(img)
     image = image.resize((30,30))
@@ -152,7 +165,9 @@ class CNN:
     return image,Y_pred
 
   def test_model_on_image(self, imgpath):
-    # Test the model on a single image, given by its filepath
+    """
+    Test the model on a single image, given by its filepath
+    """
     print("Predicting for a single image %s" % imgpath)
 
     #image = Image.open(imgpath)
