@@ -15,13 +15,21 @@ ROOT = '..\\training\\'
 # TODO: static training and test data, rather than full data & random split
 DATA = ROOT + 'data.npy'
 TARGET = ROOT + 'target.npy'
-MODEL_FP = ROOT + 'traffics.h5' # saved keras model 
+MODEL_FP = ROOT + 'traffic.h5' # saved keras model 
 HISTORY_FP = ROOT + 'traffic.pickle' # location of pickle
 
 X_TRAIN = ROOT + 'x_train.npy'
 Y_TRAIN = ROOT + 'y_train.npy'
 X_TEST = ROOT + 'x_test.npy'
 Y_TEST = ROOT + 'y_test.npy'
+
+URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.0-alpha/'
+X_TRAIN_URL = URL + 'x_train.npy'
+Y_TRAIN_URL = URL + 'y_train.npy'
+X_TEST_URL = URL + 'x_test.npy'
+Y_TEST_URL = URL + 'y_test.npy'
+MODEL_URL = URL + 'traffic.h5'
+HISTORY_URL = URL + 'traffic.pickle'
 
 CLASSES = { 0:'Speed limit (20km/h)',
             1:'Speed limit (30km/h)', 

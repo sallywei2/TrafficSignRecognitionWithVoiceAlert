@@ -11,9 +11,24 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 
 import os, sys
+import requests
 
+def download_from_internet(file_url, fp):
     """
+    Downloads the file at file_url and saves it to file at fp.
+    Only downloads if the specified destination (fp) does not exist.
+    Source: https://www.geeksforgeeks.org/downloading-files-web-using-python/
     """
+    if not os.path.exists(fp):
+        print("Downloading %s" % fp)
+        r = requests.get(file_url, stream = True)
+        with open(fp,"wb") as file:
+            for chunk in r.iter_content(chunk_size=1024):
+                 if chunk:
+                     file.write(chunk) # write to file
+    else:
+        print("A file already exists at the destination %s" % fp)
+
 def split_raw_data():
     """
     Splits the saved full dataset into testing and training data and saves it to file.
@@ -41,6 +56,11 @@ def load_splits_from_file():
     Load the training and testing split data from file.
     """
     print("Training data loaded from %s" % g.ROOT)
+
+    download_from_internet(g.X_TRAIN_URL, g.X_TRAIN)
+    download_from_internet(g.X_TEST_URL, g.X_TEST)
+    download_from_internet(g.Y_TRAIN_URL, g.Y_TRAIN)
+    download_from_internet(g.Y_TEST_URL, g.Y_TEST)
 
     X_train=np.load(g.X_TRAIN)
     X_test=np.load(g.X_TEST)
@@ -75,7 +95,8 @@ def train_model(X_train, X_test, y_train, y_test, epochs):
 
     if not os.path.exists(g.ROOT):
       os.mkdir(g.ROOT)
-    model.save_model_to_file(g.MODEL_FP)
+    if os.path.exists(g.MODEL_FP):
+      model.save_model_to_file(g.MODEL_FP)
 
     if not os.path.exists(g.HISTORY_FP):
       os.mkdir(g.HISTORY_FP)
@@ -83,9 +104,13 @@ def train_model(X_train, X_test, y_train, y_test, epochs):
 
 def load_saved_model():
     """
-    Loads the saved model and training history from file.
+    Loads the saved model and training history from file, or from the internet if it's not available.
     """
     model = Model.CNN()
+
+    download_from_internet(g.MODEL_URL, g.MODEL_FP)
+    download_from_internet(g.HISTORY_URL, g.HISTORY_FP)
+
     model.load_model_from_file(g.MODEL_FP)
     model.load_history_from_file(g.HISTORY_FP)
     return model
