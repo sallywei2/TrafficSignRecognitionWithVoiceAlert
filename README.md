@@ -1,3 +1,7 @@
+
+```
+pip install numpy
+pip install Keras
 # How to run
 
 To download the test and train data and train the modeL
@@ -44,5 +48,8 @@ pip install -U scikit-learn
 
 # Contributors
 
-WIP
+* CNN model training & tuning: @jeetparekh16
+* Program wrapper: @sallywei2
+* WIP
+
 Dataset: The German Traffic Sign Recognition Benchmark (GSTRB) by Institut Für Neuroinformatik (INI) https://benchmark.ini.rub.de/gtsrb_news.html
