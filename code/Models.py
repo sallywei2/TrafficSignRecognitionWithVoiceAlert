@@ -16,12 +16,13 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras.utils import to_categorical
 from keras.models import Sequential, load_model
-from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout
+from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, BatchNormalization
 from tensorflow.keras.preprocessing import image as kimg
 
+import os
 import pyttsx3
 
-class CNN:
+class Model:
   """
   Attributes:
     input_shape: keras Conv2D input_shape parameter
@@ -45,11 +46,46 @@ class CNN:
     test_model_on_image(imgpath): Test the model's classification on a single image
   """
 
-  def __init__(self):
+  def __init__(self, model_type):
+    self.valid_models = ['CNN','AlexNet']
+
     self.model = Sequential() # initialize basic placeholder model
     self.engine = pyttsx3.init() # text to speech engine
-    
-  def new(self, input_shape):
+
+    self.type = 'CNN'
+    self.set_model_type(model_type)
+
+  def AlexNet(self, input_shape):
+    """
+    Initializes the model as an AlexNet.
+    # input shape: (30,30,3)
+    """
+    self.type = 'AlexNet'
+    self.model = Sequential([
+        Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), activation='relu', input_shape=input_shape),
+        BatchNormalization(),
+        MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
+        Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), activation='relu', padding="same"),
+        BatchNormalization(),
+        MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
+        Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
+        BatchNormalization(),
+        Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
+        BatchNormalization(),
+        Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
+        BatchNormalization(),
+        MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
+        Flatten(),
+        Dense(4096, activation='relu'),
+        Dropout(0.5),
+        Dense(4096, activation='relu'),
+        Dropout(0.5),
+        Dense(44, activation='softmax')
+    ])
+    #Compilation of the model
+    self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+  def CNN(self, input_shape):
     """
       Initializes the CNN with the following architecture and compiles it:
         Conv2D - 5x5 x 32 filters, ReLU
@@ -65,6 +101,7 @@ class CNN:
         Dropout - 50%
         FC - 44, softmax
     """
+    self.type='CNN'
     self.model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu', input_shape=input_shape))
     self.model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu'))
     self.model.add(MaxPool2D(pool_size=(2, 2)))
@@ -76,9 +113,7 @@ class CNN:
     self.model.add(Flatten())
     self.model.add(Dense(256, activation='relu'))
     self.model.add(Dropout(rate=0.5))
-
     self.model.add(Dense(44, activation='softmax'))
-
     # Compilation of the model
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -95,40 +130,86 @@ class CNN:
     """
     return self.model.predict(img)
 
-  def save_model_to_file(self, filepath):
+  def save_model_to_file(self):
     """
     Save the keras model to file at the given filepath.
     """
+    if not os.path.exists(self.get_root_fp()):
+      os.mkdir(self.get_root_fp())
+    filepath = self.get_model_fp()
     self.model.save(filepath)
     print("Model saved to file: %s" % filepath)
 
-  def save_history_to_file(self, pickle_location):
+  def save_history_to_file(self):
     """
     Saves the training history to file as a pickle file.
     pickle_location: an absolute path
     """
+    if not os.path.exists(self.get_root_fp()):
+      os.mkdir(self.get_root_fp())
+    pickle_location = os.path.abspath(self.get_history_fp())
     with open(pickle_location, 'wb') as file_pi:
       pickle.dump(self.history, file_pi, protocol=pickle.HIGHEST_PROTOCOL)
       print("History saved to file: %s" % pickle_location)
 
-  def load_model_from_file(self,filepath):
+  def load_model_from_file(self):
     """
     Loads the model from file.
     """
+    filepath = self.get_model_fp()
     print("Loading model from file: %s" % filepath)
     self.model = load_model(filepath) # keras.model.load_model
     #print("Model loaded from file.")
     return self.model
 
-  def load_history_from_file(self,pickle_location):
+  def load_history_from_file(self):
     """
     Loads the history from file. Expects a pickle file.
     """
+    pickle_location = self.get_history_fp()
     print("Loading training history from file: %s" % pickle_location)
     with open(pickle_location, "rb") as filepath:
       self.history = pickle.load(filepath)
       #print("Training history loaded from file.")
     return self.history
+
+  def set_model_type(self, model_type):
+    if model_type in self.valid_models:
+      self.type = model_type
+      print("Changed model type to %s" % self.type)
+      return True
+    print("Set model type: %s" % self.type)
+    return False
+
+  def get_root_fp(self):
+    """
+    URL/CNN/
+    """
+    return g.ROOT + self.type + '\\'
+
+  def get_model_fp(self):
+    """
+    URL/CNN/traffic.h5
+    """
+    return self.get_root_fp() + g.MODEL_FN
+  
+  def get_history_fp(self):
+    """
+    ROOT/CNN/traffic.pickle
+    """
+    return self.get_root_fp() + g.HISTORY_FN
+
+  def get_model_url(self):
+    """
+    URL/CNN_traffic.h5
+    """
+    return g.URL + self.type + '_' + 'traffic.h5'
+
+  def get_history_url(self):
+    """
+    URL/CNN_traffic.pickle
+    """
+    return g.URL + self.type + '_' + 'traffic.pickle'
 
   def show_metrics(self):
     """
@@ -143,7 +224,7 @@ class CNN:
       plt.xlabel('epochs')
       plt.ylabel('accuracy')
       plt.legend()
-      plt.savefig(g.ROOT + 'ModelAccuracy.png')
+      plt.savefig(self.get_root_fp() + 'ModelAccuracy.png')
       plt.show()
 
       # Loss
@@ -153,7 +234,7 @@ class CNN:
       plt.xlabel('epochs')
       plt.ylabel('loss')
       plt.legend()
-      plt.savefig(g.ROOT + 'ModelLoss.png')
+      plt.savefig(self.get_root_fp()  + 'ModelLoss.png')
       plt.show()
 
   def test_on_img(self, img):
@@ -190,7 +271,7 @@ class CNN:
     print("Predicted traffic sign is: ", g.CLASSES[predicted_class])
     self.engine.say(g.CLASSES[predicted_class])
     self.engine.runAndWait()
-    
+
     plt.imshow(kimg.load_img(imgpath))
     plt.show()
 

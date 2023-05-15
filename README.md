@@ -31,12 +31,17 @@ To download the test and train data and train the modeL
 ```
   python main.py -t
   python main.py --train
+
+  python main.py --train -m 'CNN' -e 1
 ```
 
 To show the results of the model:
+If a model isn't specified, it will show CNN by default.
 ```
   python main.py -r
   python main.py --results
+
+  python code/main.py -r -m 'CNN'
 ```
 
 To display help:
@@ -51,11 +56,43 @@ To download the raw data, split it into test and train datasets, and save them t
   python main.py --split
 ```
 
+# File structure
+
+```
+|- data/
+| |-- test/
+| | |--  ...
+| |-- train/
+| | |--  ...
+| |-- images.zip
+|
+|- program/
+  |-- code/
+  | |-- CustomArgParser.py
+  | |-- Globals.py
+  | |-- main.py
+  | |-- Models.py
+  |-- training/
+    |-- CNN/
+    | |-- traffic.h5
+    | |-- traffic.pickle
+    | |-- ModelAccuracy.png
+    | |-- ModelLoss.png
+    |-- AlexNet/
+    | |-- traffic.h5
+    | |-- traffic.pickle
+    | |-- ModelAccuracy.png
+    | |-- ModelLoss.png
+    |-- x_test.npy
+    |-- x_train.npy
+    |-- y_test.npy
+    |-- y_train.npy
+```
 
 # Contributors
 
 * CNN model training & tuning: @jeetparekh16
-* Program wrapper: @sallywei2
-* WIP
+* AlexNet model, text-to-speech integration: Lakshmi
+* CLI/Program wrapper: @sallywei2
 
 Dataset: The German Traffic Sign Recognition Benchmark (GSTRB) by Institut Für Neuroinformatik (INI) https://benchmark.ini.rub.de/gtsrb_news.html

@@ -10,15 +10,17 @@ global CLASSES
 DATASET = '..\\..\\data\\'
 IMG = 'train\\14\\00014_00006_00029.png'
 IMG2 = 'train\\7\\00007_00047_00027.png'
-TEST_IMAGE = DATASET + IMG2
+TEST_IMAGE = DATASET + IMG
 IMAGES = DATASET + 'images.zip' 
 
 ROOT = '..\\training\\'
 # TODO: static training and test data, rather than full data & random split
 DATA = ROOT + 'data.npy'
 TARGET = ROOT + 'target.npy'
-MODEL_FP = ROOT + 'traffic.h5' # saved keras model 
-HISTORY_FP = ROOT + 'traffic.pickle' # location of pickle
+
+# under folder g.ROOT // modelType // FP
+MODEL_FN = 'traffic.h5' # saved keras model 
+HISTORY_FN = 'traffic.pickle' # location of pickle
 
 X_TRAIN = ROOT + 'x_train.npy'
 Y_TRAIN = ROOT + 'y_train.npy'

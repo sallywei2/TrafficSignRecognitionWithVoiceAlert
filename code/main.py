@@ -2,7 +2,7 @@
 Module containing the main program that handles passed arguments.
 """
 from CustomArgParser import CustomArgParser
-import Models as Model
+from Models import Model
 import Globals as g
 
 import numpy as np
@@ -95,29 +95,33 @@ def download_data():
 
     return X_train, X_test, y_train, y_test
 
-def train_model(X_train, X_test, y_train, y_test, epochs):
+def train_model(X_train, X_test, y_train, y_test, epochs, model_type):
     """
     Train and save the model's training history to file
     """
     input_size = X_train.shape[1:]
-    model = Model.CNN()
-    model.new(input_shape=input_size)
+    model = Model(model_type)
+    if model_type =='AlexNet':
+        model.AlexNet(input_shape=input_size)
+    else:
+        model.CNN(input_shape=input_size)
     history = model.train(X_train, y_train, 32, epochs, X_test, y_test)
 
-    model.save_model_to_file(g.MODEL_FP)
-    model.save_history_to_file(os.path.abspath(g.HISTORY_FP)) # expects an absolute path
+    model.save_model_to_file()
+    model.save_history_to_file()
 
-def load_saved_model():
+def load_saved_model(model_type='CNN'):
     """
     Loads the saved model and training history from file, or from the internet if it's not available.
+    If no model is specified, it loads the CNN by default.
+    See Models.Model for valid types.
     """
-    model = Model.CNN()
-
-    download_from_internet(g.MODEL_URL, g.MODEL_FP)
-    download_from_internet(g.HISTORY_URL, g.HISTORY_FP)
-
-    model.load_model_from_file(g.MODEL_FP)
-    model.load_history_from_file(g.HISTORY_FP)
+    model = Model(model_type)
+    download_from_internet(model.get_model_url(), model.get_model_fp())
+    download_from_internet(model.get_model_fp(), model.get_history_fp())
+        
+    model.load_model_from_file()
+    model.load_history_from_file()
     return model
 
 def main(*args):
@@ -132,13 +136,23 @@ def main(*args):
     if not os.path.exists(g.DATASET):
       os.mkdir(g.DATASET)
 
-    download_images()
-    if vargs['train'] == True:
+    if vargs['model']:
+        model_type = vargs['model']
+        print("Selected model: %s" % model_type)
+
+    if vargs['epochs']:
+        epochs = int(vargs['epochs'])
+        print("Training for custom number of epochs: %d" % epochs)
+    else:
         epochs = 15
+
+    if vargs['train'] == True:
+        download_images()
         X_train, X_test, y_train, y_test = download_data()
-        train_model(X_train, X_test, y_train, y_test, epochs)
+        train_model(X_train, X_test, y_train, y_test, epochs, model_type)
     elif vargs['results'] == True:
-        model = load_saved_model()
+        download_images()
+        model = load_saved_model(model_type)
         model.show_metrics() # plot metrics
         model.test_model_on_image(g.TEST_IMAGE) # test on a single image
     elif vargs['split'] == True:
