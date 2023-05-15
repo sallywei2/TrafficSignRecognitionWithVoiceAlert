@@ -23,8 +23,8 @@ class CustomArgParser():
     def __init__(self):
         self.parser = argparse.ArgumentParser(
                     prog='main',
-                    description='This is some text describing what this program does.',
-                    epilog='Mapillary Traffic Signs: https//www.mapillary.com/dataset/trafficsign')
+                    description='Traffic Sign Recognition.',
+                    epilog='Dataset: The German Traffic Sign Recognition Benchmark https://benchmark.ini.rub.de/gtsrb_news.html')
 
         # specify arguments
         self.parser.add_argument('-t','--train'
@@ -33,6 +33,9 @@ class CustomArgParser():
         self.parser.add_argument('-r','--results'
                     , action='store_true'
                     , help='show results after validation and testing')
+        self.parser.add_argument('-s','--split'
+                    , action='store_true' # set to True if this argument is present
+                    , help='download the raw data, split it into training and test, and save to file')
 
     def parse_args(self):
         return self.parser.parse_args()

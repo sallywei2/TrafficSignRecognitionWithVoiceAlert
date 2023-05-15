@@ -1,3 +1,6 @@
+"""
+Module containing the main program that handles passed arguments.
+"""
 from CustomArgParser import CustomArgParser
 import Models as Model
 import Globals as g

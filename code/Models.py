@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np 
 from PIL import Image
 import pickle
+
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras.utils import to_categorical
@@ -20,11 +21,12 @@ from tensorflow.keras.preprocessing import image as kimg
 
 class CNN:
   """
-  # self.input_shape
-  # self.model
-  # self.history
+  Attributes:
+    input_shape: keras Conv2D input_shape parameter
+    model: internal saved keras model
+    history: internal saved training history (keras History object)
 
-  Usage:
+  Typical usage example:
     # create a new CNN for an input with keras input_shape of 10000
     model = CNN()
     model.new(input_shape=10000)
@@ -45,7 +47,19 @@ class CNN:
     
   def new(self, input_shape):
     """
-      Creates a new CNN model and compiles it
+      Initializes the CNN with the following architecture and compiles it:
+        Conv2D - 5x5 x 32 filters, ReLU
+        Conv2D - 5x5 x 32 filters, ReLU
+        MaxPool2D
+        Dropout (25%)
+        Conv2D - 3x3 x 64 filters, ReLU
+        Conv2D - 3x3 x 64 filters, ReLU
+        MaxPool2D - 2x2
+        Dropout - 25%
+        Flatten
+        FC - 256, ReLU
+        Dropout - 50%
+        FC - 44, softmax
     """
     self.model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu', input_shape=input_shape))
     self.model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu'))
@@ -65,7 +79,6 @@ class CNN:
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
   def train(self, X_train, y_train, batch_size, epochs, X_test, y_test):
-    # Trains the model on the given dataset and saves it to file
     self.history = model.fit(X_train, y_train, batch_size=32, epochs=epochs, validation_data=(X_test, y_test))
     
     model.save('..\\training\\traffics.h5')
@@ -75,6 +88,9 @@ class CNN:
     with open('/traffics_history', 'wb') as file_pi:
       pickle.dump(self.history.history, file_pi)
 
+    """
+    Trains the model on the given dataset and returns the training history.
+    """
     return self.history
 
   def predict(self, img):
