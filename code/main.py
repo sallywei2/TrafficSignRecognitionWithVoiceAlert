@@ -21,8 +21,8 @@ def download_from_internet(file_url, fp):
     Returns quietly otherwise.
     Source: https://www.geeksforgeeks.org/downloading-files-web-using-python/
     """
+    print("Downloading %s" % fp)
     if not os.path.exists(fp):
-        print("Downloading %s" % fp)
         r = requests.get(file_url, stream = True)
         with open(fp,"wb") as file:
             for chunk in r.iter_content(chunk_size=1024):
@@ -103,13 +103,7 @@ def train_model(X_train, X_test, y_train, y_test, epochs):
     model.new(input_shape=input_size)
     history = model.train(X_train, y_train, 32, epochs, X_test, y_test)
 
-    if not os.path.exists(g.ROOT):
-      os.mkdir(g.ROOT)
-    if os.path.exists(g.MODEL_FP):
-      model.save_model_to_file(g.MODEL_FP)
-
-    if not os.path.exists(g.HISTORY_FP):
-      os.mkdir(g.HISTORY_FP)
+    model.save_model_to_file(g.MODEL_FP)
     model.save_history_to_file(os.path.abspath(g.HISTORY_FP)) # expects an absolute path
 
 def load_saved_model():
@@ -132,6 +126,10 @@ def main(*args):
     vargs = vars(args)
 
     os.chdir(os.path.dirname(os.path.realpath(sys.argv[0])))
+    if not os.path.exists(g.ROOT):
+      os.mkdir(g.ROOT)
+    if not os.path.exists(g.DATASET):
+      os.mkdir(g.DATASET)
 
     download_images()
     if vargs['train'] == True:
