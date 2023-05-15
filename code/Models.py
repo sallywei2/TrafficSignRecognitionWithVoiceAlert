@@ -138,6 +138,7 @@ class Model:
       os.mkdir(self.get_root_fp())
     filepath = self.get_model_fp()
     self.model.save(filepath)
+    self.model.save_weights(self.get_root_fp() + g.WEIGHTS_FN)
     print("Model saved to file: %s" % filepath)
 
   def save_history_to_file(self):

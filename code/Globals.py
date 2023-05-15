@@ -21,20 +21,25 @@ TARGET = ROOT + 'target.npy'
 # under folder g.ROOT // modelType // FP
 MODEL_FN = 'traffic.h5' # saved keras model 
 HISTORY_FN = 'traffic.pickle' # location of pickle
+WEIGHTS_FN = 'weights.h5'
 
 X_TRAIN = ROOT + 'x_train.npy'
 Y_TRAIN = ROOT + 'y_train.npy'
 X_TEST = ROOT + 'x_test.npy'
 Y_TEST = ROOT + 'y_test.npy'
 
-URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.0-alpha/'
-X_TRAIN_URL = URL + 'x_train.npy'
-Y_TRAIN_URL = URL + 'y_train.npy'
-X_TEST_URL = URL + 'x_test.npy'
-Y_TEST_URL = URL + 'y_test.npy'
-MODEL_URL = URL + 'traffic.h5'
-HISTORY_URL = URL + 'traffic.pickle'
-IMAGES_URL = URL + 'images.zip'
+# v0.0.1
+URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.1-alpha/'
+# v0.0.0
+URL2 = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.0-alpha/'
+X_TRAIN_URL = URL2 + 'x_train.npy'
+Y_TRAIN_URL = URL2 + 'y_train.npy'
+X_TEST_URL = URL2 + 'x_test.npy'
+Y_TEST_URL = URL2 + 'y_test.npy'
+IMAGES_URL = URL2 + 'images.zip'
+# old
+MODEL_URL = URL2 + 'traffic.h5'
+HISTORY_URL = URL2 + 'traffic.pickle'
 
 CLASSES = { 0:'Speed limit (20km/h)',
             1:'Speed limit (30km/h)', 
