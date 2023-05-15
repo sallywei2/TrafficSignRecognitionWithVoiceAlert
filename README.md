@@ -1,7 +1,29 @@
+# Requirements
+
+Python 3.8+
 
 ```
 pip install numpy
 pip install Keras
+pip install tensorflow
+pip install Flask
+pip install Werkzeug
+pip install gunicorn
+pip install pyttsx3
+pip install matplotlib
+pip install pandas
+pip install tensorflow
+pip install -U scikit-learn
+```
+
+# Installation
+
+Download the code from the releases. Other files don't need to be downloaded manually.
+
+With /code as the working directory, run any of the commands below.
+
+Training results, partial datasets, and the model will be downloaded into the folder /training.
+
 # How to run
 
 To download the test and train data and train the modeL
@@ -28,23 +50,6 @@ To download the raw data, split it into test and train datasets, and save them t
   python main.py --split
 ```
 
-# Requirements
-
-Python 3.8+
-
-```
-pip install numpy
-pip install Keras
-pip install tensorflow
-pip install Flask
-pip install Werkzeug
-pip install gunicorn
-pip install pyttsx3
-pip install matplotlib
-pip install pandas
-pip install tensorflow
-pip install -U scikit-learn
-```
 
 # Contributors
 
