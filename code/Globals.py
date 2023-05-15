@@ -7,15 +7,21 @@ global TEST_IMAGE
 
 global CLASSES
 
-DATASET = '..\\..\\data\\' #'C:\\Users\\jeetp\\'
+DATASET = '..\\..\\data\\'
 IMG = 'train\\14\\00014_00006_00029.png'
 TEST_IMAGE = DATASET + IMG
 
-ROOT = '..\\..\\data\\training\\'
-DATA = 'data.npy' # TODO: static training and test data, rather than full data & random split
-TARGET = 'target.npy'
-SAVED_MODEL = 'traffics.h5' # saved keras model 
-SAVED_HISTORY = 'traffics_history' # location of pickle
+ROOT = '..\\training\\'
+# TODO: static training and test data, rather than full data & random split
+DATA = ROOT + 'data.npy'
+TARGET = ROOT + 'target.npy'
+MODEL_FP = ROOT + 'traffics.h5' # saved keras model 
+HISTORY_FP = ROOT + 'traffic.pickle' # location of pickle
+
+X_TRAIN = ROOT + 'x_train.npy'
+Y_TRAIN = ROOT + 'y_train.npy'
+X_TEST = ROOT + 'x_test.npy'
+Y_TEST = ROOT + 'y_test.npy'
 
 CLASSES = { 0:'Speed limit (20km/h)',
             1:'Speed limit (30km/h)', 

@@ -18,6 +18,12 @@ To display help:
   python main.py --help
 ```
 
+To download the raw data, split it into test and train datasets, and save them to file:
+```
+  python main.py -s
+  python main.py --split
+```
+
 # Requirements
 
 Python 3.8+

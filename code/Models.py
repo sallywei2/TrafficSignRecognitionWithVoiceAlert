@@ -79,49 +79,56 @@ class CNN:
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
   def train(self, X_train, y_train, batch_size, epochs, X_test, y_test):
-    self.history = model.fit(X_train, y_train, batch_size=32, epochs=epochs, validation_data=(X_test, y_test))
-    
-    model.save('..\\training\\traffics.h5')
-
-    # TODO: save training information
-    #pd.DataFrame(self.history).to_csv('..\\training\\traffics_history.csv')
-    with open('/traffics_history', 'wb') as file_pi:
-      pickle.dump(self.history.history, file_pi)
-
     """
     Trains the model on the given dataset and returns the training history.
     """
+    self.history = self.model.fit(X_train, y_train, batch_size=32, epochs=epochs, validation_data=(X_test, y_test))
     return self.history
 
   def predict(self, img):
     # Predict probabilities for input image
     return self.model.predict(img)
 
+  def save_model_to_file(self, filepath):
+    self.model.save(filepath)
+    print("Model saved to file: %s" % filepath)
+
+  def save_history_to_file(self, pickle_location):
+    """
+    Saves the training history to file as a pickle file.
+    pickle_location: an absolute path
+    """
+    with open(pickle_location, 'wb') as file_pi:
+      pickle.dump(self.history, file_pi, protocol=pickle.HIGHEST_PROTOCOL)
+      print("History saved to file: %s" % pickle_location)
+
   def load_model_from_file(self,filepath):
+    print("Loading model from file: %s" % filepath)
     self.model = load_model(filepath) # keras.model.load_model
+    #print("Model loaded from file.")
     return self.model
 
   def load_history_from_file(self,pickle_location):
-    try:
-      with open(pickle_location, "rb") as filepath:
-        self.history = pickle.load(filepath)
-      return self.history
-    except:
-      return
+    print("Loading training history from file: %s" % pickle_location)
+    with open(pickle_location, "rb") as filepath:
+      self.history = pickle.load(filepath)
+      #print("Training history loaded from file.")
+    return self.history
 
   def show_metrics(self):
     """
       Shows plots of training vs validation accuracy and loss for the model.
     """
-    if self.model.history:
+    if self.history:
       # accuracy 
       plt.figure(0)
-      plt.plot(self.model.history.history['accuracy'], label='training accuracy')
-      plt.plot(self.model.history.history['val_accuracy'], label='val accuracy')
+      plt.plot(self.history.history['accuracy'], label='training accuracy')
+      plt.plot(self.history.history['val_accuracy'], label='val accuracy')
       plt.title('Accuracy')
       plt.xlabel('epochs')
       plt.ylabel('accuracy')
       plt.legend()
+      plt.savefig(g.ROOT + 'ModelAccuracy.png')
       plt.show()
 
       # Loss
@@ -131,6 +138,7 @@ class CNN:
       plt.xlabel('epochs')
       plt.ylabel('loss')
       plt.legend()
+      plt.savefig(g.ROOT + 'ModelLoss.png')
       plt.show()
 
   def test_on_img(self, img):
