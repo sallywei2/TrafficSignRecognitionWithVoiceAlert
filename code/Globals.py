@@ -9,7 +9,8 @@ global CLASSES
 
 DATASET = '..\\..\\data\\'
 IMG = 'train\\14\\00014_00006_00029.png'
-TEST_IMAGE = DATASET + IMG
+IMG2 = 'train\\7\\00007_00047_00027.png'
+TEST_IMAGE = DATASET + IMG2
 IMAGES = DATASET + 'images.zip' 
 
 ROOT = '..\\training\\'

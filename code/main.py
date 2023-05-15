@@ -21,8 +21,8 @@ def download_from_internet(file_url, fp):
     Returns quietly otherwise.
     Source: https://www.geeksforgeeks.org/downloading-files-web-using-python/
     """
-    print("Downloading %s" % fp)
     if not os.path.exists(fp):
+        print("Downloading %s" % fp)
         r = requests.get(file_url, stream = True)
         with open(fp,"wb") as file:
             for chunk in r.iter_content(chunk_size=1024):
@@ -36,6 +36,7 @@ def download_images():
     """
     download_from_internet(g.IMAGES_URL, g.IMAGES)
     if not os.path.exists(g.DATASET + "\\train"):
+        print("Extracting %s" % g.IMAGES)
         with zipfile.ZipFile(g.IMAGES, 'r') as zip_ref:
             zip_ref.extractall(g.DATASET)
 
