@@ -12,11 +12,13 @@ from keras.utils import to_categorical
 
 import os, sys
 import requests
+import zipfile
 
 def download_from_internet(file_url, fp):
     """
     Downloads the file at file_url and saves it to file at fp.
     Only downloads if the specified destination (fp) does not exist.
+    Returns quietly otherwise.
     Source: https://www.geeksforgeeks.org/downloading-files-web-using-python/
     """
     if not os.path.exists(fp):
@@ -26,8 +28,16 @@ def download_from_internet(file_url, fp):
             for chunk in r.iter_content(chunk_size=1024):
                  if chunk:
                      file.write(chunk) # write to file
-    else:
-        print("A file already exists at the destination %s" % fp)
+
+def download_images():
+    """
+    Downloads the raw images from the internet and unzips them if the folder doesn't exist.
+    Unzip files: https://stackoverflow.com/a/3451150
+    """
+    download_from_internet(g.IMAGES_URL, g.IMAGES)
+    if not os.path.exists(g.DATASET):
+        with zipfile.ZipFile(g.IMAGES, 'r') as zip_ref:
+            zip_ref.extractall(g.DATASET)
 
 def split_raw_data():
     """
@@ -123,6 +133,7 @@ def main(*args):
 
     os.chdir(os.path.dirname(os.path.realpath(sys.argv[0])))
 
+    download_images()
     if vargs['train'] == True:
         epochs = 15
         X_train, X_test, y_train, y_test = download_data()

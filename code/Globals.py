@@ -10,6 +10,7 @@ global CLASSES
 DATASET = '..\\..\\data\\'
 IMG = 'train\\14\\00014_00006_00029.png'
 TEST_IMAGE = DATASET + IMG
+IMAGES = DATASET + 'images.zip' 
 
 ROOT = '..\\training\\'
 # TODO: static training and test data, rather than full data & random split
@@ -30,6 +31,7 @@ X_TEST_URL = URL + 'x_test.npy'
 Y_TEST_URL = URL + 'y_test.npy'
 MODEL_URL = URL + 'traffic.h5'
 HISTORY_URL = URL + 'traffic.pickle'
+IMAGES_URL = URL + 'images.zip'
 
 CLASSES = { 0:'Speed limit (20km/h)',
             1:'Speed limit (30km/h)', 
