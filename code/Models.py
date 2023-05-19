@@ -175,11 +175,12 @@ class Model:
     return self.history
 
   def set_model_type(self, model_type):
+    print(self.valid_models)
     if model_type in self.valid_models:
       self.type = model_type
       print("Changed model type to %s" % self.type)
       return True
-    print("Set model type: %s" % self.type)
+    print("Using default model type: %s" % self.type)
     return False
 
   def get_root_fp(self):

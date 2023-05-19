@@ -32,7 +32,7 @@ To download the test and train data and train the modeL
   python main.py -t
   python main.py --train
 
-  python main.py --train -m 'CNN' -e 1
+  python main.py --train -m CNN -e 1
 ```
 
 To show the results of the model:
@@ -41,7 +41,7 @@ If a model isn't specified, it will show CNN by default.
   python main.py -r
   python main.py --results
 
-  python code/main.py -r -m 'CNN'
+  python code/main.py -r -m CNN
 ```
 
 To display help:

@@ -138,6 +138,7 @@ def main(*args):
 
     if vargs['model']:
         model_type = vargs['model']
+        model_type.replace("'","").replace(":","") #clean input
         print("Selected model: %s" % model_type)
 
     if vargs['epochs']:
