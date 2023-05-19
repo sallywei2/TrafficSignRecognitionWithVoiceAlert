@@ -14,10 +14,12 @@ import pickle
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from tensorflow import keras # MobileNet
 from keras.utils import to_categorical
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, BatchNormalization
 from tensorflow.keras.preprocessing import image as kimg
+from keras.utils.vis_utils import plot_model
 
 import os
 import pyttsx3
@@ -47,7 +49,7 @@ class Model:
   """
 
   def __init__(self, model_type):
-    self.valid_models = ['CNN','AlexNet']
+    self.valid_models = ['CNN','AlexNet', 'MobileNet']
 
     self.model = Sequential() # initialize basic placeholder model
     self.engine = pyttsx3.init() # text to speech engine
@@ -117,11 +119,73 @@ class Model:
     # Compilation of the model
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
+  def MobileNet(self, input_shape):
+    self.type = 'MobileNet'
+    
+    #Pretrained model on ImageNet
+    base_model = keras.applications.MobileNetV2(
+        weights='imagenet',
+        input_shape=(224, 224, 3),
+        include_top=False)
+
+    # Freeze base model
+    base_model.trainable = False
+
+    # Create inputs with correct shape
+    inputs = keras.Input(shape=(224, 224, 3))
+    x = base_model(inputs, training=False)
+    
+    # Add pooling layer or flatten layer
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    
+    # Add final dense layer
+    outputs = keras.layers.Dense(85, activation = 'softmax')(x)
+    
+    # Combine inputs and outputs to create model
+    self.model = keras.Model(inputs,outputs)
+    self.model.compile(loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+
+    #selfmodel.summary()
+    #plot_model(self.model, show_shapes=True, show_layer_names=True)
+  
+  def augment_data(self):
+    """
+    Performs image processing to augment the visual data for training MobileNet.
+    Uses ImageDataGenerator. See also: https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator
+    """
+    #Augment the data
+    from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+    datagen = ImageDataGenerator(
+        samplewise_center=True,  # set each sample mean to 0
+        rotation_range=30,  # randomly rotate images in the range (degrees, 0 to 180)
+        zoom_range = 0.3, # Randomly zoom image 
+        width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
+        height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
+        horizontal_flip=True,  # randomly flip images
+        vertical_flip=True) # randomnly flip images
+
+    # load and iterate training dataset
+    train_id = datagen.flow_from_directory(DATASET + 'train', 
+                                       target_size=(224,224), 
+                                       color_mode='rgb', 
+                                       class_mode="categorical")
+    # load and iterate validation dataset
+    valid_id = datagen.flow_from_directory(DATASET + 'test', 
+                                      target_size=(224,224), 
+                                      color_mode='rgb', 
+                                      class_mode="categorical")
+    return train_id, valid_id
+
   def train(self, X_train, y_train, batch_size, epochs, X_test, y_test):
     """
     Trains the model on the given dataset and returns the training history.
     """
-    self.history = self.model.fit(X_train, y_train, batch_size=32, epochs=epochs, validation_data=(X_test, y_test))
+    if self.type=='MobileNet':
+      train_generator,val_generator = augment_data()
+      self.history = self.model.fit(train_generator, validation_data=val_generator, batch_size=batch_size, epochs=epochs)
+    else: # AlexNet or CNN
+      self.history = self.model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_data=(X_test, y_test))
     return self.history
 
   def predict(self, img):
