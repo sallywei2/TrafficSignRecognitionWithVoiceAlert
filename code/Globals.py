@@ -28,9 +28,9 @@ Y_TRAIN = ROOT + 'y_train.npy'
 X_TEST = ROOT + 'x_test.npy'
 Y_TEST = ROOT + 'y_test.npy'
 
-# v0.0.1
-URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.1-alpha/'
-# v0.0.0
+# v0.0.2 - newest version for saved model weights & history
+URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.2-alpha/'
+# v0.0.0 - old(est) version for raw dataset & training/test split downloads
 URL2 = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.0-alpha/'
 X_TRAIN_URL = URL2 + 'x_train.npy'
 Y_TRAIN_URL = URL2 + 'y_train.npy'
