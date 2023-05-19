@@ -13,6 +13,7 @@ from PIL import Image
 import pickle
 
 import matplotlib.pyplot as plt
+
 import tensorflow as tf
 from tensorflow import keras # MobileNet
 from keras.utils import to_categorical
@@ -54,7 +55,8 @@ class Model:
     self.model = Sequential() # initialize basic placeholder model
     self.engine = pyttsx3.init() # text to speech engine
 
-    self.type = 'CNN'
+    self.history = -1
+    self.type = 'CNN' # default type
     self.set_model_type(model_type)
 
   def AlexNet(self, input_shape):
@@ -120,18 +122,27 @@ class Model:
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
   def MobileNet(self, input_shape):
+    """
+    MobileNet built on top of a pretrained ImageNet.
+    
+    This model could not be integrated with the others and is currently 
+    unavailable in this program for the following reasons:
+      - expects different input shape of 224
+      - cannot accept an input shape less than 32 (so cannot accept images
+        of size 30x30, as the other implemented models can)
+    """
     self.type = 'MobileNet'
     
     #Pretrained model on ImageNet
     base_model = keras.applications.MobileNetV2(
         weights='imagenet',
-        input_shape=(224, 224, 3),
+        input_shape=(32, 32, 3),
         include_top=False)
 
     # Freeze base model
     base_model.trainable = False
 
-    # Create inputs with correct shape
+    # Create inputs with correct shape #224x224
     inputs = keras.Input(shape=(224, 224, 3))
     x = base_model(inputs, training=False)
     
@@ -167,12 +178,12 @@ class Model:
         vertical_flip=True) # randomnly flip images
 
     # load and iterate training dataset
-    train_id = datagen.flow_from_directory(DATASET + 'train', 
+    train_id = datagen.flow_from_directory(g.DATASET + 'train', 
                                        target_size=(224,224), 
                                        color_mode='rgb', 
                                        class_mode="categorical")
     # load and iterate validation dataset
-    valid_id = datagen.flow_from_directory(DATASET + 'test', 
+    valid_id = datagen.flow_from_directory(g.DATASET + 'test', 
                                       target_size=(224,224), 
                                       color_mode='rgb', 
                                       class_mode="categorical")
@@ -183,7 +194,7 @@ class Model:
     Trains the model on the given dataset and returns the training history.
     """
     if self.type=='MobileNet':
-      train_generator,val_generator = augment_data()
+      train_generator,val_generator = self.augment_data()
       self.history = self.model.fit(train_generator, validation_data=val_generator, batch_size=batch_size, epochs=epochs)
     else: # AlexNet or CNN
       self.history = self.model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_data=(X_test, y_test))
@@ -241,13 +252,13 @@ class Model:
       return self.history
     except:
       # EOFError: Ran out of input (0KB file)
-      print("Warning: There was an issue with the training history file.")
+      print("  Warning: There was an issue when loading the training history file.")
       return
 
   def set_model_type(self, model_type):
     if model_type in self.valid_models:
       self.type = model_type
-      #print("Changed model type to %s" % self.type)
+      print("Changed model type to %s" % self.type)
       return True
     return False
 
@@ -281,11 +292,20 @@ class Model:
     """
     return g.URL + self.type + '_' + 'traffic.pickle'
 
+  def show_img(self, filename):
+    """
+    Uses matplotlib to show an image (.png, etc.)
+    """
+    print("show file: ", filename)
+    img = plt.imread(filename)
+    imgplot = plt.imshow(img)
+    plt.show()
+
   def show_metrics(self):
     """
       Shows and save to file the plots of training vs validation accuracy and loss for the model.
     """
-    if self.history:
+    if self.history != -1:
       # accuracy 
       plt.figure(0)
       plt.plot(self.history.history['accuracy'], label='training accuracy')
@@ -306,7 +326,11 @@ class Model:
       plt.legend()
       plt.savefig(self.get_root_fp()  + 'ModelLoss.png')
       plt.show()
-
+    else:
+      # no saved history file
+      self.show_img(self.get_root_fp() + 'ModelAccuracy.png')
+      self.show_img(self.get_root_fp() + 'ModelLoss.png')
+      
   def test_on_img(self, img):
     """
     Test the model on the given image (img)

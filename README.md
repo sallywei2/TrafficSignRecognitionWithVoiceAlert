@@ -47,7 +47,10 @@ If a model isn't specified, it will show CNN by default.
 Supported models:
 * CNN (default)
 * AlexNet
-* MobileNet
+
+Unsupported models (see notebooks folder for original ipynb files):
+* MobileNet (incompatible inputs expected)
+* VGG19
 
 To display help:
 ```
@@ -97,7 +100,7 @@ To download the raw data, split it into test and train datasets, and save them t
 # Contributions
 
 * Shashidhar (@shashidhar788): Dataset, VGG19
-* Jeet (@jeetparekh16): GUI, CNN, MobileNet
+* Jeet (@jeetparekh16): GUI, CNN
 * Lakshmi (@Lakshmisatvika26): AlexNet, pyttsx3 text-to-speech integration
 * Sally (@sallywei2): CLI/Program wrapper, documentation
 
