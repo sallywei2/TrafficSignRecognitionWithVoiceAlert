@@ -118,7 +118,7 @@ def load_saved_model(model_type='CNN'):
     """
     model = Model(model_type)
     download_from_internet(model.get_model_url(), model.get_model_fp())
-    download_from_internet(model.get_model_fp(), model.get_history_fp())
+    download_from_internet(model.get_history_url(), model.get_history_fp())
         
     model.load_model_from_file()
     model.load_history_from_file()

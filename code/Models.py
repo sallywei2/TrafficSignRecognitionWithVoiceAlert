@@ -169,18 +169,21 @@ class Model:
     """
     pickle_location = self.get_history_fp()
     print("Loading training history from file: %s" % pickle_location)
-    with open(pickle_location, "rb") as filepath:
-      self.history = pickle.load(filepath)
-      #print("Training history loaded from file.")
-    return self.history
+    try:
+      with open(pickle_location, "rb") as filepath:
+        self.history = pickle.load(filepath)
+        #print("Training history loaded from file.")
+      return self.history
+    except:
+      # EOFError: Ran out of input (0KB file)
+      print("Warning: There was an issue with the training history file.")
+      return
 
   def set_model_type(self, model_type):
-    print(self.valid_models)
     if model_type in self.valid_models:
       self.type = model_type
-      print("Changed model type to %s" % self.type)
+      #print("Changed model type to %s" % self.type)
       return True
-    print("Using default model type: %s" % self.type)
     return False
 
   def get_root_fp(self):
