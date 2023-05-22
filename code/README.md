@@ -27,6 +27,8 @@ Training results, partial datasets, and the model will be downloaded into the fo
 
 # How to run
 
+## CLI
+
 To download the test and train data and train the modeL
 ```
   python main.py -t
@@ -63,6 +65,10 @@ To download the raw data, split it into test and train datasets, and save them t
   python main.py -s
   python main.py --split
 ```
+
+## GUI
+
+train_app.py contains the GUI, powered by flask.
 
 # File structure
 
