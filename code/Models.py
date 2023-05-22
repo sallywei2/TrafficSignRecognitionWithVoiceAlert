@@ -65,26 +65,26 @@ class Model:
     # input shape: (30,30,3)
     """
     self.type = 'AlexNet'
-    self.model = Sequential([
-        Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), activation='relu', input_shape=input_shape),
-        BatchNormalization(),
-        MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
-        Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), activation='relu', padding="same"),
-        BatchNormalization(),
-        MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
-        Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
-        BatchNormalization(),
-        Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
-        BatchNormalization(),
-        Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
-        BatchNormalization(),
-        MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
-        Flatten(),
-        Dense(4096, activation='relu'),
-        Dropout(0.5),
-        Dense(4096, activation='relu'),
-        Dropout(0.5),
-        Dense(44, activation='softmax')
+    self.model = keras.models.Sequential([
+        keras.layers.Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), activation='relu', input_shape=(30,30,3)),
+        keras.layers.BatchNormalization(),
+        keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
+        keras.layers.Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), activation='relu', padding="same"),
+        keras.layers.BatchNormalization(),
+        keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
+        keras.layers.Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
+        keras.layers.BatchNormalization(),
+        keras.layers.Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
+        keras.layers.BatchNormalization(),
+        keras.layers.Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
+        keras.layers.BatchNormalization(),
+        keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
+        keras.layers.Flatten(),
+        keras.layers.Dense(4096, activation='relu'),
+        keras.layers.Dropout(0.5),
+        keras.layers.Dense(4096, activation='relu'),
+        keras.layers.Dropout(0.5),
+        keras.layers.Dense(44, activation='softmax')
     ])
     #Compilation of the model
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -264,13 +264,19 @@ class Model:
 
   def get_root_fp(self):
     """
-    URL/CNN/
+    ROOT/CNN/
     """
     return g.ROOT + self.type + '\\'
 
+  def get_root_url(self):
+    """
+    URL/ROOT_
+    """
+    return g.URL + self.type + '_'
+
   def get_model_fp(self):
     """
-    URL/CNN/traffic.h5
+    ROOT/CNN/traffic.h5
     """
     return self.get_root_fp() + g.MODEL_FN
   
@@ -284,13 +290,13 @@ class Model:
     """
     URL/CNN_traffic.h5
     """
-    return g.URL + self.type + '_' + 'traffic.h5'
+    return self.get_root_url() + 'traffic.h5'
 
   def get_history_url(self):
     """
     URL/CNN_traffic.pickle
     """
-    return g.URL + self.type + '_' + 'traffic.pickle'
+    return self.get_root_url() + 'traffic.pickle'
 
   def show_img(self, filename):
     """
@@ -314,7 +320,7 @@ class Model:
       plt.xlabel('epochs')
       plt.ylabel('accuracy')
       plt.legend()
-      plt.savefig(self.get_root_fp() + 'ModelAccuracy.png')
+      plt.savefig(self.get_root_fp() + g.MODELACC)
       plt.show()
 
       # Loss
@@ -324,12 +330,12 @@ class Model:
       plt.xlabel('epochs')
       plt.ylabel('loss')
       plt.legend()
-      plt.savefig(self.get_root_fp()  + 'ModelLoss.png')
+      plt.savefig(self.get_root_fp()  + g.MODELLOSS)
       plt.show()
     else:
       # no saved history file
-      self.show_img(self.get_root_fp() + 'ModelAccuracy.png')
-      self.show_img(self.get_root_fp() + 'ModelLoss.png')
+      self.show_img(self.get_root_fp() + g.MODELACC)
+      self.show_img(self.get_root_fp() + g.MODELLOSS)
       
   def test_on_img(self, img):
     """

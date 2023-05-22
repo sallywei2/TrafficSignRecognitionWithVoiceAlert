@@ -7,6 +7,7 @@ import Globals as g
 
 import numpy as np
 from sklearn.model_selection import train_test_split
+import cv2
 
 from keras.utils import to_categorical
 
@@ -39,6 +40,81 @@ def download_images():
         print("Extracting %s" % g.IMAGES)
         with zipfile.ZipFile(g.IMAGES, 'r') as zip_ref:
             zip_ref.extractall(g.DATASET)
+
+def confirm_preprocessed_images(_df, _rowcnt, _srcdir = SOURCE_DIR):
+    '''
+    Crop 처리가 잘 되는지 눈으로 확인
+    Integrated from notebooks/german-traffic-signs-preprocessing.ipynb
+    '''
+    _df_size = len(_df.index)
+    if (_df_size < _rowcnt):
+        _rowcnt = _df_size
+        
+    for _, _row in _df.sample(_rowcnt).iterrows():
+        _filename = _row['Path'].lower()
+        _classId = _row['ClassId']
+        _x1 = _row['Roi.X1']
+        _x2 = _row['Roi.X2']
+        _y1 = _row['Roi.Y1']
+        _y2 = _row['Roi.Y2']
+    
+        _img = cv2.imread(_srcdir + _filename)
+        _crop_img = _img[_y1:_y2, _x1:_x2]
+    
+        _f, _ax = plt.subplots(1, 2, figsize=(5,12))
+        _ax[0].imshow(_img)
+        _ax[0].set_title('original')
+        _ax[1].imshow(_crop_img)
+        _ax[1].set_title('cropped')
+        plt.show()
+
+def write_preprocessed_images(_df, _srcdir=SOURCE_DIR, _outdir=OUT_DIR):
+    '''
+    Crop 처리된 이미지를 저장한다.
+    Integrated from notebooks/german-traffic-signs-preprocessing.ipynb
+    '''
+    for _, _row in _df.iterrows():
+        _filename = _row['Path'].lower()
+        _classId = _row['ClassId']
+        _x1 = _row['Roi.X1']
+        _x2 = _row['Roi.X2']
+        _y1 = _row['Roi.Y1']
+        _y2 = _row['Roi.Y2']
+    
+        _img = cv2.imread(_srcdir + _filename)
+        _crop_img = _img[_y1:_y2, _x1:_x2]
+    
+        if not cv2.imwrite(_outdir + _filename, _crop_img):
+            raise Exception("Could not write image: {}".format(_filename))
+
+def preprocess_images():
+    """
+    This script pre-processes the German Traffic Sign Recognition Benchmark (GTSRB) available at Kaggle (https://www.kaggle.com/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign).
+    The original dataset contains image files as well as metadata files. As the images capture scenes larger than the traffic signs, the metadata files contain coordinates to 
+    locate the traffic sign within each image. By cropping images with these coordinates, I expect I can reduce noise in data and enhance training result.
+    
+    Integrated from notebooks/german-traffic-signs-preprocessing.ipynb
+    """
+    SOURCE_DIR = g.DATASET #'/notebooks/gtsrb/'
+    OUT_DIR = g.DATASET #'/notebooks/gtsrb-preprocessed/'
+
+    download_from_internet(g.IMG_META_TRAIN_URL,g.IMG_META_TRAIN_FP)
+    TRAIN_META_FILE = g.IMG_META_TRAIN_FP
+
+    download_from_internet(g.IMG_META_TEST_URL,g.IMG_META_TEST_FP)
+    TEST_META_FILE = g.IMG_META_TEST_FP
+
+    df_train = pd.read_csv(TRAIN_META_FILE, delimiter=',')
+    #print(df_train.shape)
+    #df_train.head()
+
+    df_test = pd.read_csv(TEST_META_FILE, delimiter=',')
+    #print(df_test.shape)
+    #df_test.head()
+
+    write_preprocessed_images(df_train)
+    write_preprocessed_images(df_test)
+    return
 
 def split_raw_data():
     """
@@ -154,11 +230,15 @@ def main(*args):
 
     if vargs['train'] == True:
         download_images()
+        preprocess_images()
         X_train, X_test, y_train, y_test = download_data()
         train_model(X_train, X_test, y_train, y_test, epochs, model_type)
     elif vargs['results'] == True:
         download_images()
         model = load_saved_model(model_type)
+        if model.history == -1:
+            download_images(model.get_root_url() + g.MODELACC, model.get_root_fp() + g.MODELACC)
+            download_images(model.get_root_url() + g.MODELLOSS, model.get_root_fp() + g.MODELLOSS)
         model.show_metrics() # plot metrics
         model.test_model_on_image(g.TEST_IMAGE) # test on a single image
     elif vargs['split'] == True:

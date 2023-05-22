@@ -14,9 +14,12 @@ TEST_IMAGE = DATASET + IMG
 IMAGES = DATASET + 'images.zip' 
 
 ROOT = '..\\training\\'
-# TODO: static training and test data, rather than full data & random split
 DATA = ROOT + 'data.npy'
 TARGET = ROOT + 'target.npy'
+IMG_META_TRAIN_FP = ROOT + 'Train.csv'
+IMG_META_TEST_FP = ROOT + 'Test.csv'
+
+## file namaes
 
 # under folder g.ROOT // modelType // FP
 MODEL_FN = 'traffic.h5' # saved keras model 
@@ -28,6 +31,15 @@ Y_TRAIN = ROOT + 'y_train.npy'
 X_TEST = ROOT + 'x_test.npy'
 Y_TEST = ROOT + 'y_test.npy'
 
+MODELACC = 'ModelAccuracy.png'
+MODELLOSS = 'ModelLoss.png'
+
+## URLS
+
+# v0.0.3 - version for img metadata
+URL3 = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.3-alpha/'
+IMG_META_TRAIN_URL = URL3 + 'ImgMetadataTrain.csv'
+IMG_META_TEST_URL = URL3 + 'ImgMetadataTest.csv'
 # v0.0.2 - newest version for saved model weights & history
 URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.2-alpha/'
 # v0.0.0 - old(est) version for raw dataset & training/test split downloads
