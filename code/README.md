@@ -21,7 +21,9 @@ pip install tqdm
 
 # Installation
 
-Download the code from the releases. Other files don't need to be downloaded manually.
+Download the newest code as a zip file from the main directory.
+
+The releases are used to track different model versions (model weights as .h5 or training history as .pickle, as applicable) and may not contain the most up-to-date code.
 
 With /code as the working directory, run any of the commands below.
 
@@ -51,10 +53,7 @@ If a model isn't specified, it will show CNN by default.
 Supported models:
 * CNN (default)
 * AlexNet
-
-Unsupported models (see notebooks folder for original ipynb files):
-* MobileNet (incompatible inputs expected)
-* VGG19
+* VGG
 
 To display help:
 ```
@@ -110,6 +109,6 @@ train_app.py contains the GUI, powered by flask.
 * Shashidhar (@shashidhar788): Dataset, VGG19
 * Jeet (@jeetparekh16): GUI, CNN
 * Lakshmi (@Lakshmisatvika26): AlexNet, pyttsx3 text-to-speech integration
-* Sally (@sallywei2): CLI/Program wrapper, documentation
+* Sally (@sallywei2): CLI, documentation, version control (GitHub)
 
 Dataset: The German Traffic Sign Recognition Benchmark (GSTRB) by Institut Für Neuroinformatik (INI) https://benchmark.ini.rub.de/gtsrb_news.html
