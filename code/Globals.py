@@ -36,12 +36,12 @@ MODELLOSS = 'ModelLoss.png'
 
 ## URLS
 
-# v0.0.3 - version for img metadata
+# v0.0.3 - version for img metadata and addition of VGG
 URL3 = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.3-alpha/'
-IMG_META_TRAIN_URL = URL3 + 'ImgMetadataTrain.csv'
-IMG_META_TEST_URL = URL3 + 'ImgMetadataTest.csv'
+IMG_META_TRAIN_URL = URL3 + 'Train.csv'
+IMG_META_TEST_URL = URL3 + 'Test.csv'
 # v0.0.2 - newest version for saved model weights & history
-URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.2-alpha/'
+URL = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.3-alpha/'
 # v0.0.0 - old(est) version for raw dataset & training/test split downloads
 URL2 = 'https://github.com/sallywei2/Deep-Learning-With-Traffic-Signs-Under-Different-Weather-Conditions/releases/download/v0.0.0-alpha/'
 X_TRAIN_URL = URL2 + 'x_train.npy'

@@ -14,34 +14,44 @@ from keras.utils import to_categorical
 import os, sys
 import requests
 import zipfile
+from tqdm import tqdm
 
-def download_from_internet(file_url, fp):
+def download_from_internet(file_url, fp, force_download=False):
     """
     Downloads the file at file_url and saves it to file at fp.
     Only downloads if the specified destination (fp) does not exist.
     Returns quietly otherwise.
     Source: https://www.geeksforgeeks.org/downloading-files-web-using-python/
     """
-    if not os.path.exists(fp):
+    if not os.path.exists(fp) or force_download:
         print("Downloading %s" % fp)
         r = requests.get(file_url, stream = True)
-        with open(fp,"wb") as file:
-            for chunk in r.iter_content(chunk_size=1024):
-                 if chunk:
-                     file.write(chunk) # write to file
+        if r:
+            with open(fp,"wb") as file:
+                for chunk in r.iter_content(chunk_size=1024):
+                     if chunk:
+                         file.write(chunk) # write to file
 
-def download_images():
+def download_images(force_download=False):
     """
     Downloads the raw images from the internet and unzips them if the folder doesn't exist.
     Unzip files: https://stackoverflow.com/a/3451150
     """
     download_from_internet(g.IMAGES_URL, g.IMAGES)
     if not os.path.exists(g.DATASET + "\\train"):
-        print("Extracting %s" % g.IMAGES)
-        with zipfile.ZipFile(g.IMAGES, 'r') as zip_ref:
-            zip_ref.extractall(g.DATASET)
+        try:
+            print("Extracting %s" % g.IMAGES)
+            with zipfile.ZipFile(g.IMAGES, 'r') as zip_ref:
+                zip_ref.extractall(g.DATASET)
+        except:
+            if force_download:
+                print("Redownload failed. Please check the images zipfile manually.")
+                return
+            else:
+                print("There was an issue while extracting the zip file. Attempting to redownload....")
+                download_images(force_download=True)
 
-def confirm_preprocessed_images(_df, _rowcnt, _srcdir = SOURCE_DIR):
+def confirm_preprocessed_images(_df, _rowcnt, _srcdir):
     '''
     Crop 처리가 잘 되는지 눈으로 확인
     Integrated from notebooks/german-traffic-signs-preprocessing.ipynb
@@ -68,7 +78,25 @@ def confirm_preprocessed_images(_df, _rowcnt, _srcdir = SOURCE_DIR):
         _ax[1].set_title('cropped')
         plt.show()
 
-def write_preprocessed_images(_df, _srcdir=SOURCE_DIR, _outdir=OUT_DIR):
+def resize_images():
+    """
+    Resize images into 32x32(x3) for VGG
+    """
+    for i in tqdm(range(len(g.CLASSES))):
+        path = os.path.join(cur_path, 'train', str(i))
+        images = os.listdir(path)
+        for a in images:
+            try:
+                image = Image.open(path + '/' + a)
+                image = image.resize((32, 32))
+                image = np.array(image)
+                data.append(image)
+                labels.append(i)
+            except Exception as e:
+                print(e)
+    return data, labels
+
+def write_preprocessed_images(_df, _srcdir, _outdir):
     '''
     Crop 처리된 이미지를 저장한다.
     Integrated from notebooks/german-traffic-signs-preprocessing.ipynb
@@ -112,16 +140,19 @@ def preprocess_images():
     #print(df_test.shape)
     #df_test.head()
 
-    write_preprocessed_images(df_train)
-    write_preprocessed_images(df_test)
+    write_preprocessed_images(df_train, _srcdir=SOURCE_DIR, _outdir=OUT_DIR)
+    write_preprocessed_images(df_test, _srcdir=SOURCE_DIR, _outdir=OUT_DIR)
     return
 
-def split_raw_data():
+def split_raw_data(download_data=False):
     """
     Splits the saved full dataset into testing and training data and saves it to file.
     """
-    data=np.load(g.DATA)
-    labels=np.load(g.TARGET)
+    if download_data:
+        data=np.load(g.DATA)
+        labels=np.load(g.TARGET)
+    else:
+        data, labels = resize_images()
 
     print("Raw data loaded from %s" % g.DATA)
 
@@ -179,6 +210,8 @@ def train_model(X_train, X_test, y_train, y_test, epochs, model_type):
     model = Model(model_type)
     if model_type == 'AlexNet':
         model.AlexNet(input_shape=input_size)
+    if model_type == 'VGG':
+        model.VGG(input_shape=input_size)
     else:
         model.CNN(input_shape=input_size)
     history = model.train(X_train, y_train, 32, epochs, X_test, y_test)
@@ -193,6 +226,10 @@ def load_saved_model(model_type='CNN'):
     See Models.Model for valid types.
     """
     model = Model(model_type)
+
+    if not os.path.exists(model.get_root_fp()):
+        os.mkdir(model.get_root_fp())
+
     download_from_internet(model.get_model_url(), model.get_model_fp())
     download_from_internet(model.get_history_url(), model.get_history_fp())
         
@@ -229,14 +266,16 @@ def main(*args):
         X_train, X_test, y_train, y_test = download_data()
         train_model(X_train, X_test, y_train, y_test, epochs, model_type)
     elif vargs['results'] == True:
-        download_images()
         model = load_saved_model(model_type)
         if model.history == -1:
             download_images(model.get_root_url() + g.MODELACC, model.get_root_fp() + g.MODELACC)
             download_images(model.get_root_url() + g.MODELLOSS, model.get_root_fp() + g.MODELLOSS)
         model.show_metrics() # plot metrics
+        
+        download_images()
         model.test_model_on_image(g.TEST_IMAGE) # test on a single image
     elif vargs['split'] == True:
+        download_images()
         split_raw_data()
 
 if __name__ == '__main__':

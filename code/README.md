@@ -15,6 +15,8 @@ pip install pandas
 pip install tensorflow
 pip install -U scikit-learn
 pip install pyttsx3
+pip install opencv-python
+pip install tqdm
 ```
 
 # Installation

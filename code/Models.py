@@ -17,9 +17,15 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow import keras # MobileNet
 from keras.utils import to_categorical
-from keras.models import Sequential, load_model
-from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, BatchNormalization
-from tensorflow.keras.preprocessing import image as kimg
+from keras.models import Sequential, load_model, Model
+
+#from keras.applications.vgg16 import VGG16
+#from keras.applications.resnet50 import ResNet50
+from keras.applications.vgg19 import VGG19
+from keras.applications.mobilenet_v2 import MobileNetV2
+
+from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, BatchNormalization, GlobalAveragePooling2D
+from keras.preprocessing import image as kimg
 from keras.utils.vis_utils import plot_model
 
 import os
@@ -50,7 +56,7 @@ class Model:
   """
 
   def __init__(self, model_type):
-    self.valid_models = ['CNN','AlexNet']
+    self.valid_models = ['CNN','AlexNet','VGG']
 
     self.model = Sequential() # initialize basic placeholder model
     self.engine = pyttsx3.init() # text to speech engine
@@ -66,7 +72,7 @@ class Model:
     """
     self.type = 'AlexNet'
     self.model = keras.models.Sequential([
-        keras.layers.Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), activation='relu', input_shape=(30,30,3)),
+        keras.layers.Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), activation='relu', input_shape=input_shape),
         keras.layers.BatchNormalization(),
         keras.layers.MaxPool2D(pool_size=(2,2), strides=(2,2), padding='same'),
         keras.layers.Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), activation='relu', padding="same"),
@@ -106,12 +112,17 @@ class Model:
         FC - 44, softmax
     """
     self.type='CNN'
+    # Add BatchNormalization layers to your model
     self.model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu', input_shape=input_shape))
+    self.model.add(BatchNormalization())
     self.model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu'))
+    self.model.add(BatchNormalization())
     self.model.add(MaxPool2D(pool_size=(2, 2)))
     self.model.add(Dropout(rate=0.25))
     self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation='relu'))
+    self.model.add(BatchNormalization())
     self.model.add(Conv2D(filters=64, kernel_size=(3, 3), activation='relu'))
+    self.model.add(BatchNormalization())
     self.model.add(MaxPool2D(pool_size=(2, 2)))
     self.model.add(Dropout(rate=0.25))
     self.model.add(Flatten())
@@ -121,8 +132,24 @@ class Model:
     # Compilation of the model
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    inputs = keras.Input(shape=(224, 224, 3))
-    x = base_model(inputs, training=False)
+  def VGG(self, input_shape, num_classes):
+    """
+    VGG
+    input_shape = (32,32,3)
+    """
+    base_model = VGG19(weights='imagenet', input_shape=input_shape, include_top=False)
+    # add a global spatial average pooling layer
+    x = base_model.output
+    x = GlobalAveragePooling2D()(x)
+    # let's add a fully-connected layer
+    x = Dense(1024, activation='relu')(x)
+    # and a logistic layer
+    predictions = Dense(g.num_classes, activation='softmax')(x)
+    # this is the model we will train
+    self.model = Model(inputs=base_model.input, outputs=predictions)
+    #Compilation of the model
+    self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
   def augment_data(self):
     """
     Performs image processing to augment the visual data for training MobileNet.
