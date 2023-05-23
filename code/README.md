@@ -106,9 +106,9 @@ train_app.py contains the GUI, powered by flask.
 
 # Contributions
 
-* Shashidhar (@shashidhar788): Dataset, VGG19
-* Jeet (@jeetparekh16): GUI, CNN
-* Lakshmi (@Lakshmisatvika26): AlexNet, pyttsx3 text-to-speech integration
-* Sally (@sallywei2): CLI, documentation, version control (GitHub)
+* Shashidhar (@shashidhar788): Dataset, VGG19, documentation
+* Jeet (@jeetparekh16): GUI, CNN, documentation
+* Lakshmi (@Lakshmisatvika26): AlexNet, pyttsx3 text-to-speech integration, documentation
+* Sally (@sallywei2): CLI, version control (GitHub), documentation
 
 Dataset: The German Traffic Sign Recognition Benchmark (GSTRB) by Institut Für Neuroinformatik (INI) https://benchmark.ini.rub.de/gtsrb_news.html
