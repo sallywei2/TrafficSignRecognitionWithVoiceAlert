@@ -25,7 +25,7 @@ from keras.applications.vgg19 import VGG19
 from keras.applications.mobilenet_v2 import MobileNetV2
 
 from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, BatchNormalization, GlobalAveragePooling2D
-from keras.preprocessing import image as kimg
+from tensorflow.keras.preprocessing import image as kimg
 from keras.utils.vis_utils import plot_model
 
 import os
@@ -242,13 +242,13 @@ class Model:
       return self.history
     except:
       # EOFError: Ran out of input (0KB file)
-      print("  Warning: There was an issue when loading the training history file.")
+      g.print_debug("  Warning: There was an issue when loading the training history file.")
       return
 
   def set_model_type(self, model_type):
     if model_type in self.valid_models:
       self.type = model_type
-      print("Changed model type to %s" % self.type)
+      g.print_debug("Changed model type to %s" % self.type)
       return True
     return False
 

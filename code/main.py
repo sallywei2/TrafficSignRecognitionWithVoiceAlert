@@ -23,14 +23,16 @@ def download_from_internet(file_url, fp, force_download=False):
     Returns quietly otherwise.
     Source: https://www.geeksforgeeks.org/downloading-files-web-using-python/
     """
-    if not os.path.exists(fp) or force_download:
+    if (not os.path.exists(fp)) or (force_download):
         print("Downloading %s" % fp)
         r = requests.get(file_url, stream = True)
-        if r:
+        if r.status_code == 200:
             with open(fp,"wb") as file:
                 for chunk in r.iter_content(chunk_size=1024):
                      if chunk:
                          file.write(chunk) # write to file
+        else:
+            g.print_debug("Could not download the requested file: %s" % file_url)
 
 def download_images(force_download=False):
     """
@@ -49,7 +51,9 @@ def download_images(force_download=False):
                 return
             else:
                 print("There was an issue while extracting the zip file. Attempting to redownload....")
+                os.remove(g.IMAGES)
                 download_images(force_download=True)
+                exit()
 
 def confirm_preprocessed_images(_df, _rowcnt, _srcdir):
     '''
@@ -268,8 +272,8 @@ def main(*args):
     elif vargs['results'] == True:
         model = load_saved_model(model_type)
         if model.history == -1:
-            download_images(model.get_root_url() + g.MODELACC, model.get_root_fp() + g.MODELACC)
-            download_images(model.get_root_url() + g.MODELLOSS, model.get_root_fp() + g.MODELLOSS)
+            download_from_internet(model.get_root_url() + g.MODELACC, model.get_root_fp() + g.MODELACC)
+            download_from_internet(model.get_root_url() + g.MODELLOSS, model.get_root_fp() + g.MODELLOSS)
         model.show_metrics() # plot metrics
         
         download_images()

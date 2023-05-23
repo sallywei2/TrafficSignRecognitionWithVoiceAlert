@@ -8,8 +8,8 @@ global TEST_IMAGE
 global CLASSES
 
 DATASET = '..\\..\\data\\'
-IMG = 'train\\14\\00014_00006_00029.png'
-IMG2 = 'train\\7\\00007_00047_00027.png'
+IMG = 'test\\00002.png'
+IMG2 = 'test\\00010.png'
 TEST_IMAGE = DATASET + IMG
 IMAGES = DATASET + 'images.zip' 
 
@@ -97,3 +97,9 @@ CLASSES = { 0:'Speed limit (20km/h)',
             41:'End of no passing', 
             42:'End no passing veh > 3.5 tons',
             43: 'No sign'}
+
+DEBUG = False
+
+def print_debug(text):
+    if DEBUG:
+        print(text)
