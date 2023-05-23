@@ -37,7 +37,7 @@ class CustomArgParser():
                     , action='store_true' # set to True if this argument is present
                     , help='download the raw data, split it into training and test, and save to file')
         self.parser.add_argument('-m','--model'
-                    , help='Specify which model to run. If unspecified, defaults to CNN. Valid options: CNN, AlexNet')
+                    , help='Specify which model to run. If unspecified, defaults to CNN. Valid options: CNN, AlexNet, VGG')
         self.parser.add_argument('-e','--epochs'
                     , help='Specify how many epochs to train for. The default is 15.')
 
