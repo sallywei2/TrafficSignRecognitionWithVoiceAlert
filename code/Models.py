@@ -50,7 +50,7 @@ class Model:
   """
 
   def __init__(self, model_type):
-    self.valid_models = ['CNN','AlexNet', 'MobileNet']
+    self.valid_models = ['CNN','AlexNet']
 
     self.model = Sequential() # initialize basic placeholder model
     self.engine = pyttsx3.init() # text to speech engine
@@ -121,45 +121,8 @@ class Model:
     # Compilation of the model
     self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-  def MobileNet(self, input_shape):
-    """
-    MobileNet built on top of a pretrained ImageNet.
-    
-    This model could not be integrated with the others and is currently 
-    unavailable in this program for the following reasons:
-      - expects different input shape of 224
-      - cannot accept an input shape less than 32 (so cannot accept images
-        of size 30x30, as the other implemented models can)
-    """
-    self.type = 'MobileNet'
-    
-    #Pretrained model on ImageNet
-    base_model = keras.applications.MobileNetV2(
-        weights='imagenet',
-        input_shape=(32, 32, 3),
-        include_top=False)
-
-    # Freeze base model
-    base_model.trainable = False
-
-    # Create inputs with correct shape #224x224
     inputs = keras.Input(shape=(224, 224, 3))
     x = base_model(inputs, training=False)
-    
-    # Add pooling layer or flatten layer
-    x = keras.layers.GlobalAveragePooling2D()(x)
-    
-    # Add final dense layer
-    num_classes = len(g.CLASSES)
-    outputs = keras.layers.Dense(num_classes, activation = 'softmax')(x)
-    
-    # Combine inputs and outputs to create model
-    self.model = keras.Model(inputs,outputs)
-    self.model.compile(loss = 'categorical_crossentropy' , metrics = ['accuracy'])
-
-    #selfmodel.summary()
-    #plot_model(self.model, show_shapes=True, show_layer_names=True)
-  
   def augment_data(self):
     """
     Performs image processing to augment the visual data for training MobileNet.

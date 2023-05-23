@@ -179,11 +179,6 @@ def train_model(X_train, X_test, y_train, y_test, epochs, model_type):
     model = Model(model_type)
     if model_type == 'AlexNet':
         model.AlexNet(input_shape=input_size)
-    if model_type == 'MobileNet':
-        print("MobileNet is currently unavailable for training. See also: docustring")
-        return
-        # MobileNet could not be integrated
-        model.MobileNet(input_shape=input_size)
     else:
         model.CNN(input_shape=input_size)
     history = model.train(X_train, y_train, 32, epochs, X_test, y_test)
